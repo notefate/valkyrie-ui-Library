@@ -1,6 +1,6 @@
 # Valkyrie UI Library
 
-A modern, clean UI library for Roblox with a sleek dark theme and comprehensive components.
+made by MEEEE
 
 ## Installation
 
