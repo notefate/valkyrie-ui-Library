@@ -5,13 +5,13 @@ A modern, clean UI library for Roblox with a sleek dark theme and comprehensive 
 ## Installation
 
 ```lua
-loadstring(game:HttpGet("https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/ui.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/notefate/valkyrie-ui-Library/refs/heads/main/ui.lua"))()
 ```
 
 ## Quick Start
 
 ```lua
-local Valkyrie = loadstring(game:HttpGet("https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/ui.lua"))()
+local Valkyrie = loadstring(game:HttpGet("https://raw.githubusercontent.com/notefate/valkyrie-ui-Library/refs/heads/main/ui.lua"))()
 
 local window = Valkyrie:CreateWindow({
     title = "My Script",
