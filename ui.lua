@@ -17,7 +17,7 @@ Valkyrie.theme = {
 	stroke = Color3.fromRGB(36, 38, 46),
 	text = Color3.fromRGB(230, 232, 240),
 	muted = Color3.fromRGB(150, 154, 168),
-	accent = Color3.fromRGB(255, 60, 60),
+	accent = Color3.fromRGB(255, 215, 0),
 	danger = Color3.fromRGB(255, 90, 90),
 }
 
@@ -1429,7 +1429,10 @@ function Section:AddSlider(opts)
 
 	return {
 		Set = function(v)
-			setValue(v, false)
+			value = snap(v)
+			valueLabel.Text = tostring(value) .. suffix
+			local pct = (value - min) / (max - min)
+			fill.Size = UDim2.new(pct, 0, 1, 0)
 		end,
 		Get = function()
 			return value
@@ -1479,10 +1482,10 @@ function Section:AddKeybind(text, defaultKey, callback)
 	create("UIPadding", { PaddingLeft = UDim.new(0, 8), Parent = btn })
 
 	local awaiting = false
-	local function setKey(key)
+	local function setKey(key, fireCallback)
 		current = key
 		btn.Text = current and current.Name or "None"
-		if typeof(callback) == "function" then
+		if fireCallback and typeof(callback) == "function" then
 			callback(current)
 		end
 	end
@@ -1503,13 +1506,15 @@ function Section:AddKeybind(text, defaultKey, callback)
 				if conn then
 					conn:Disconnect()
 				end
-				setKey(input.KeyCode)
+				setKey(input.KeyCode, true)
 			end
 		end)
 	end)
 
 	return {
-		Set = setKey,
+		Set = function(key)
+			setKey(key, false)
+		end,
 		Get = function()
 			return current
 		end,
@@ -1823,7 +1828,9 @@ function Section:AddDropdown(opts)
 		end,
 		Set = function(v)
 			if not multi then
-				setSelected(v)
+				selected = v
+				dropdownBtn.Text = selectionText()
+				refreshOptions(items)
 				return
 			end
 			selectedSet = {}
