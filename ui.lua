@@ -195,7 +195,7 @@ function Valkyrie:CreateWindow(opts)
 	local controls = create("Frame", {
 		Name = "Controls",
 		BackgroundTransparency = 1,
-		Size = UDim2.new(0, 70, 1, 0),
+		Size = UDim2.new(0, 96, 1, 0),
 		AnchorPoint = Vector2.new(1, 0),
 		Position = UDim2.new(1, -8, 0, 0),
 		Parent = topBar,
@@ -208,12 +208,12 @@ function Valkyrie:CreateWindow(opts)
 		BorderSizePixel = 0,
 		Text = "-",
 		Font = Valkyrie.fonts.bold,
-		TextSize = 16,
+		TextSize = 18,
 		TextColor3 = Color3.fromRGB(255, 255, 255),
-		Size = UDim2.fromOffset(30, 22),
+		Size = UDim2.fromOffset(44, 26),
 		Parent = controls,
 	})
-	minimize.Position = UDim2.new(0, 0, 0.5, -11)
+	minimize.Position = UDim2.new(0, 0, 0.5, -13)
 
 	local close = create("TextButton", {
 		Name = "Close",
@@ -222,12 +222,12 @@ function Valkyrie:CreateWindow(opts)
 		BorderSizePixel = 0,
 		Text = "X",
 		Font = Valkyrie.fonts.bold,
-		TextSize = 14,
+		TextSize = 16,
 		TextColor3 = Color3.fromRGB(255, 255, 255),
-		Size = UDim2.fromOffset(30, 22),
+		Size = UDim2.fromOffset(44, 26),
 		Parent = controls,
 	})
-	close.Position = UDim2.new(0, 38, 0.5, -11)
+	close.Position = UDim2.new(0, 52, 0.5, -13)
 
 	local divider = create("Frame", {
 		Name = "Divider",
@@ -450,24 +450,52 @@ function Valkyrie:CreateWindow(opts)
 
 	do
 		local touch = is_touch_device()
-		local toggle = create("TextButton", {
+		local toggle = create("ImageButton", {
 			Name = "MobileToggle",
 			AutoButtonColor = false,
-			BackgroundColor3 = self.theme.panel,
+			BackgroundTransparency = 1,
+			ClipsDescendants = true,
 			BorderSizePixel = 0,
-			Text = tostring(launcherText),
-			Font = Valkyrie.fonts.semibold,
-			TextSize = 12,
-			TextColor3 = self.theme.text,
+			Image = "rbxassetid://90090883306100",
+			ScaleType = Enum.ScaleType.Fit,
 			AnchorPoint = Vector2.new(1, 1),
 			Position = UDim2.new(1, -16, 1, -16),
-			Size = UDim2.fromOffset(96, 34),
+			Size = UDim2.fromOffset(320, 56),
 			Visible = touch,
 			Parent = gui,
 		})
 		round(toggle, 10)
-		stroke(toggle, self.theme.stroke)
 		window._mobileToggle = toggle
+		
+		-- Make the toggle button draggable
+		local dragging = false
+		local dragStart
+		local startPos
+		
+		toggle.InputBegan:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+				dragging = true
+				dragStart = input.Position
+				startPos = toggle.Position
+				input.Changed:Connect(function()
+					if input.UserInputState == Enum.UserInputState.End then
+						dragging = false
+					end
+				end)
+			end
+		end)
+		
+		UserInputService.InputChanged:Connect(function(input)
+			if not dragging then
+				return
+			end
+			if input.UserInputType ~= Enum.UserInputType.MouseMovement and input.UserInputType ~= Enum.UserInputType.Touch then
+				return
+			end
+			local delta = input.Position - dragStart
+			toggle.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+		end)
+		
 		toggle.Activated:Connect(function()
 			window:ToggleVisible()
 		end)
